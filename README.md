@@ -1,7 +1,7 @@
 
-# Biconomy Smart Account (Smart Contract Wallet) Overview
+# Smart Account (Smart Contract Wallet) Overview
 
-Biconomy Smart Account is a smart contract wallet that builds on core concepts of Gnosis / Argent safes and implements an interface to support calls from [account abstraction](https://eips.ethereum.org/EIPS/eip-4337) Entry Point contract. We took all the good parts of existing smart contract wallets. 
+Smart Account is a smart contract wallet that builds on core concepts of Gnosis / Argent safes and implements an interface to support calls from [account abstraction](https://eips.ethereum.org/EIPS/eip-4337) Entry Point contract. We took all the good parts of existing smart contract wallets. 
 
 These smart wallets have a single owner (1/1 Multisig) and are designed in such a way that it is
 
@@ -14,7 +14,7 @@ These smart wallets have a single owner (1/1 Multisig) and are designed in such 
 
 #### BaseSmartAccount.sol (51 sloc)
 Abstract contract that implements the EIP4337 IWallet interface 
-defines set of methods (compatible with EIP and Biconomy SDK) that all Smart Wallets must implement
+defines set of methods (compatible with EIP and SDK) that all Smart Wallets must implement
 
 #### Proxy.sol (26 sloc)
 lightweight Proxy which can be upgraded using UUPS pattern
@@ -60,7 +60,7 @@ Allows to batch multiple transactions into one. Relayer -> Smart Wallet - > Mult
 MultiSend functionality but reverts if a transaction tries to do delegatecall
 
 #### VerifyingSingletonPaymaster.sol (74 sloc)
- A paymaster uses an external service to decide whether to pay for the UserOp. The paymaster trusts an external signer to sign the transaction. The calling user must pass the UserOp to that external signer first, which performs whatever off-chain verification before signing the UserOp. Singleton Paymaster is biconomy Paymaster which can be used by all the Dapps and manages gas accounting for their corresponding paymasterId. 
+ A paymaster uses an external service to decide whether to pay for the UserOp. The paymaster trusts an external signer to sign the transaction. The calling user must pass the UserOp to that external signer first, which performs whatever off-chain verification before signing the UserOp. Singleton Paymaster is Paymaster which can be used by all the Dapps and manages gas accounting for their corresponding paymasterId. 
 
  #### PaymasterHelpers.sol ()
  Library useful for decoding paymaster data and context
