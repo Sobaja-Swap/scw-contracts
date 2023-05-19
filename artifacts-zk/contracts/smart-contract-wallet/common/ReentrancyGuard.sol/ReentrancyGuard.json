@@ -1,0 +1,17 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "ReentrancyGuard",
+  "sourceName": "contracts/smart-contract-wallet/common/ReentrancyGuard.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "ReentrancyProtectionActivated",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

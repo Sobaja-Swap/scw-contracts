@@ -1,0 +1,266 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "SmartAccountFactoryErrors",
+  "sourceName": "contracts/smart-contract-wallet/common/Errors.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "smartAccount",
+          "type": "address"
+        }
+      ],
+      "name": "AlreadyInitialized",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "BaseImplementationCannotBeZero",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "CallerIsNotAnEntryPoint",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "CallerIsNotEntryPointOrOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "CallerIsNotOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "targetTxGas",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gasPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "success",
+          "type": "bool"
+        }
+      ],
+      "name": "CanNotEstimateGas",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "DelegateCallsOnly",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "EntryPointCannotBeZero",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ExecutionFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "implementationAddress",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidImplementation",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "restoredSigner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "expectedSigner",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidSignature",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "MixedAuthFail",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "gasLeft",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gasRequired",
+          "type": "uint256"
+        }
+      ],
+      "name": "NotEnoughGasLeft",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "OwnerCanNotBeSelf",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "OwnerCannotBeZero",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "OwnerProvidedIsSame",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "ProxyDeploymentFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TokenGasPriceFactorCanNotBeZero",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "dest",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "TokenTransferFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TransferToZeroAddressAttempt",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "destLength",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "valueLength",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "funcLength",
+          "type": "uint256"
+        }
+      ],
+      "name": "WrongBatchProvided",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "contractSignature",
+          "type": "bytes"
+        }
+      ],
+      "name": "WrongContractSignature",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "uintS",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "contractSignatureLength",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "signatureLength",
+          "type": "uint256"
+        }
+      ],
+      "name": "WrongContractSignatureFormat",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x00000001012001900000000c0000613d0000008001000039000000400010043f0000000001000416000000000110004c0000000c0000c13d00000020010000390000010000100443000001200000044300000005010000410000000f0001042e000000000100001900000010000104300000000e000004320000000f0001042e00000010000104300000000000000000000000000000000000000000000000000000000200000000000000000000000000000040000001000000000000000000d473fec4d5f062e95eb708afcc10fe77d98aa35b1d1573c704aa8cf86f2d71f0",
+  "deployedBytecode": "0x00000001012001900000000c0000613d0000008001000039000000400010043f0000000001000416000000000110004c0000000c0000c13d00000020010000390000010000100443000001200000044300000005010000410000000f0001042e000000000100001900000010000104300000000e000004320000000f0001042e00000010000104300000000000000000000000000000000000000000000000000000000200000000000000000000000000000040000001000000000000000000d473fec4d5f062e95eb708afcc10fe77d98aa35b1d1573c704aa8cf86f2d71f0",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

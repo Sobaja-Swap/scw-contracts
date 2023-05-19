@@ -29,6 +29,6 @@ contract FakeSigner {
 contract SelfDestructingContract {
     // All this does is self destruct and send funds to "to"
     function selfDestruct(address to) external {
-        selfdestruct(payable(to));
+        // selfdestruct(payable(to));
     }
 }

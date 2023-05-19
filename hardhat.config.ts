@@ -1,248 +1,231 @@
 import * as dotenv from "dotenv";
+import "@nomiclabs/hardhat-etherscan";
+import "@nomiclabs/hardhat-solhint";
+// import "@nomiclabs/hardhat-waffle";
+// import "@nomicfoundation/hardhat-toolbox";
+// import "hardhat-deploy";
+// import "hardhat-deploy-ethers";
+// import "hardhat-gas-reporter";
+// import "hardhat-spdx-license-identifier";
+// import "hardhat-typechain";
+// import "hardhat-watcher";
+// import "solidity-coverage";
+// import "@tenderly/hardhat-tenderly";
+
+import "hardhat-deploy";
+//zk package
+import "@matterlabs/hardhat-zksync-deploy";
+import "@matterlabs/hardhat-zksync-solc";
+import "@matterlabs/hardhat-zksync-verify";
+import "./scripts/verifyTask";
 
 import { HardhatUserConfig, task } from "hardhat/config";
-import "@nomiclabs/hardhat-truffle5";
-import "@nomiclabs/hardhat-etherscan";
-import "@nomiclabs/hardhat-waffle";
-import "@typechain/hardhat";
-import "hardhat-gas-reporter";
-import "solidity-coverage";
 
-const walletUtils = require("./walletUtils");
+import { removeConsoleLog } from "hardhat-preprocessor";
 
 dotenv.config();
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
+const accounts = {
+  mnemonic:
+    process.env.MNEMONIC ||
+    "test test test test test test test test test test test junk",
+};
 
-  for (const account of accounts) {
-    console.log(account.address);
+const config: HardhatUserConfig = {
+  defaultNetwork: "hardhat",
+  etherscan: {
+    apiKey: scanApiKeyFromEnv(),
+    customChains: []
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    admin: {
+      default: 1,
+    },
+  },
+  networks: {
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts,
+      // gasPrice: 200 * 1000000000,
+      chainId: 1,
+    },
+    localhost: {
+      live: false,
+      saveDeployments: true,
+      tags: ["local"],
+    },
+    hardhat: {
+      chainId: 421613,
+      forking: {
+        enabled: process.env.FORKING === "true",
+        url: "https://arb1.arbitrum.io/rpc" || `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      },
+      live: false,
+      saveDeployments: true,
+      tags: ["test", "local"],
+    },
+    zkTestnet: {
+      url: "https://zksync2-testnet.zksync.dev",
+      ethNetwork: "goerli",
+      zksync: true,
+      chainId: 280,
+      verifyURL: 'https://zksync2-testnet-explorer.zksync.dev/contract_verification'
+    },
+    zkMainnet: {
+      url: "https://mainnet.era.zksync.io",
+      ethNetwork: "mainnet",
+      zksync: true,
+    },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts,
+      chainId: 5,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasPrice: 250000000000,
+      gasMultiplier: 2,
+    },
+    matic: {
+      url: "https://rpc-mainnet.maticvigil.com",
+      accounts,
+      chainId: 137,
+      live: true,
+      saveDeployments: true,
+    },
+    "matic-testnet": {
+      url: "https://rpc-mumbai.maticvigil.com/",
+      accounts: [process.env.PRIVATE_KEY!],
+      chainId: 80001,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    bsc: {
+      url: "https://bsc-dataseed.binance.org",
+      accounts,
+      chainId: 56,
+      live: true,
+      saveDeployments: true,
+    },
+    "bsc-testnet": {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      accounts,
+      chainId: 97,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    avalanche: {
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      accounts,
+      chainId: 43114,
+      live: true,
+      saveDeployments: true,
+      gasPrice: 470000000000,
+    },
+    "avalanche-testnet": {
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      accounts,
+      chainId: 43113,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    arbitrum: {
+      url: "https://arb1.arbitrum.io/rpc",
+      accounts,
+      chainId: 42161,
+      saveDeployments: true,
+    },
+    "arbitrum-testnet": {
+      url: "https://goerli-rollup.arbitrum.io/rpc",
+      accounts,
+      chainId: 421613,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+  },
+  preprocess: {
+    eachLine: removeConsoleLog(
+      (bre) =>
+        bre.network.name !== "hardhat" && bre.network.name !== "localhost"
+    ),
+  },
+  zksolc: {
+    version: "1.3.10",
+    compilerSource: "binary",
+  },
+  solidity: {
+    version: "0.8.17",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts",
+  },
+  // watcher: {
+  //   compile: {
+  //     tasks: ["compile"],
+  //     files: ["./contracts"],
+  //     verbose: true,
+  //   },
+  // },
+};
+
+function scanApiKeyFromEnv() {
+  const networkName = findNetworkNameFromArgv();
+  let apiKey = process.env.ETHERSCAN_API_KEY;
+
+  switch (networkName) {
+    case "mainnet":
+      apiKey = process.env.ETHERSCAN_API_KEY;
+      break;
+    case "goerli":
+      apiKey = process.env.ETHERSCAN_API_KEY;
+      break;
+    case "matic":
+      apiKey = process.env.POLYGONSCAN_API_KEY;
+      break;
+    case "matic-testnet":
+      apiKey = process.env.POLYGONSCAN_API_KEY;
+      break;
+    case "bsc":
+      apiKey = process.env.BSCSCAN_API_KEY;
+      break;
+    case "bsc-testnet":
+      apiKey = process.env.BSCSCAN_API_KEY;
+      break;
   }
-});
+  return apiKey;
+}
+
+function findNetworkNameFromArgv() {
+  const index = process.argv.findIndex((arg) => arg === "--network")
+
+  if (index === -1) {
+    return null;
+  }
+
+  const networkName = process.argv[index + 1];
+  return networkName;
+}
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
-
-const config: HardhatUserConfig = {
-  // defaultNetwork: "ganache",
-  solidity: {
-    compilers: [
-      {
-        version: "0.8.17",
-        settings: {
-          optimizer: { enabled: true, runs: 800 },
-        },
-      },
-    ],
-  },
-  networks: {
-    hardhat: {
-      accounts: {
-        accountsBalance: "10000000000000000000000000",
-        //   mnemonic: MNEMONIC,
-      },
-      allowUnlimitedContractSize: true,
-      chainId: 31337,
-    },
-    ganache: {
-      chainId: 1337,
-      url: "http://localhost:8545",
-      accounts: {
-        mnemonic:
-          "garbage miracle journey siren inch method pulse learn month grid frame business",
-        path: "m/44'/60'/0'/0",
-        initialIndex: 0,
-        count: 20,
-      },
-    },
-    eth_mainnet: {
-      url: process.env.ETH_MAINNET_URL || "",
-      chainId: 1,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-    },
-    goerli: {
-      url: process.env.GOERLI_URL || "",
-      chainId: 5,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-    },
-    polygon_mainnet: {
-      url: process.env.POLYGON_URL || "",
-      chainId: 137,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-      //: 200e9,    
-    },
-    polygon_mumbai: {
-      url: process.env.POLYGON_MUMBAI_URL || "",
-      chainId: 80001,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-    },
-    bnb_mainnet: {
-      url: "https://bsc-dataseed2.binance.org",
-      chainId: 56,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-    },
-    bnb_testnet: {
-      url:
-        process.env.BSC_TESTNET_URL ||
-        "https://wandering-broken-tree.bsc-testnet.quiknode.pro/7992da20f9e4f97c2a117bea9af37c1c266f63ec/",
-      chainId: 97,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-          gasPrice: 50e9
-    },
-    avalancheMain: {
-      url: "https://api.avax.network/ext/bc/C/rpc",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-      chainId: 43114,
-    },
-    avalancheTest: {
-      url: "https://api.avax-test.network/ext/bc/C/rpc",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-      chainId: 43113,
-    },
-    arbitrumMain: {
-      url: "https://arb1.arbitrum.io/rpc",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-      chainId: 42161,
-    },
-    arbitrumGoerli: {
-      url: "https://goerli-rollup.arbitrum.io/rpc",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-      chainId: 421613,
-      //gasPrice: 2e9, //2 gwei
-    },
-    arbitrumTest: {
-      url: "https://rinkeby.arbitrum.io/rpc",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-      chainId: 421611,
-    },
-    arbitrumNova: {
-      url: "https://nova.arbitrum.io/rpc",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-      chainId: 42170,
-    },
-    zkevm_mainnet: {
-      url: process.env.ZKEVM_MAINNET_URL || "https://zkevm-rpc.com",
-      chainId: 1101,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-    },
-    zkevm_testnet: {
-      url: process.env.ZKEVM_TESTNET_URL || "https://rpc.public.zkevm-test.net",
-      chainId: 1442,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-      //gasPrice: 50e9,    
-    },
-    optimismGoerli: {
-      url: `https://goerli.optimism.io`,
-      accounts: walletUtils.makeKeyList(),
-      chainId: 420,
-    },
-    optimismMainnet: {
-      url: `https://mainnet.optimism.io`,
-      accounts: walletUtils.makeKeyList(),
-      chainId: 10,
-    },
-    moonbeam_mainnet: {
-      url: "https://rpc.api.moonbeam.network",
-      chainId: 1284,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-    },
-    moonbeamTest: {
-      url: "https://rpc.api.moonbase.moonbeam.network",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined
-          ? [process.env.PRIVATE_KEY]
-          : walletUtils.makeKeyList(),
-      chainId: 1287,
-    },
-    celoTestnet: {
-      url: `https://alfajores-forno.celo-testnet.org`,
-      accounts: walletUtils.makeKeyList(),
-      chainId: 44787,
-      // gasPrice: 6400000
-    },
-    celoMainnet: {
-      url: `https://forno.celo.org`,
-      accounts: walletUtils.makeKeyList(),
-      chainId: 42220,
-      // gasPrice: 6400000
-    },
-    neonDevnet: {
-      url: `https://proxy.devnet.neonlabs.org/solana`,
-      accounts: walletUtils.makeKeyList(),
-      chainId: 245022926,
-      // gasPrice: 6400000
-    },
-  },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
-  },
-  etherscan: {
-    apiKey: {
-      mainnet: process.env.ETHERSCAN_API_KEY || "",
-      goerli: process.env.ETHERSCAN_API_KEY || "",
-      polygonMumbai: process.env.POLYGONSCAN_API_KEY || "",
-      polygon: process.env.POLYGONSCAN_API_KEY || "",
-      bscTestnet: process.env.BSCSCAN_API_KEY || "",
-      bsc: process.env.BSCSCAN_API_KEY || "",
-      moonbeam: process.env.MOONBEAM_KEY || "",
-      moonbaseAlpha: process.env.MOONBEAM_KEY || "",
-      avalancheFujiTestnet: process.env.AVALANCHE_API_KEY || "",
-      avalanche: process.env.AVALANCHE_API_KEY || "",
-      arbitrumGoerli: process.env.ARBITRUM_API_KEY || "",
-      arbitrumTestnet: process.env.ARBITRUM_API_KEY || "",
-      arbitrumOne: process.env.ARBITRUM_API_KEY || "",
-      optimisticGoerli: process.env.OPTIMISTIC_API_KEY || "",
-      optimisticEthereum: process.env.OPTIMISTIC_API_KEY || "",
-    },
-  },
-};
-
 export default config;

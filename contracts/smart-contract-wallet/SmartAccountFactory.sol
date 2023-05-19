@@ -15,6 +15,8 @@ import {SmartAccountFactoryErrors} from "./common/Errors.sol";
 contract SmartAccountFactory {
     address public immutable basicImplementation;
     DefaultCallbackHandler public immutable minimalHandler;
+    bytes32 constant CREATE2_PREFIX =
+        0x2020dba91b30cc0006188af794c2fb30dd8520db7e2c088b7fc7c103c00ca494;
 
     event AccountCreation(
         address indexed account,
@@ -177,8 +179,15 @@ contract SmartAccountFactory {
         bytes32 salt = keccak256(
             abi.encodePacked(keccak256(initializer), _index)
         );
+
         bytes32 hash = keccak256(
-            abi.encodePacked(bytes1(0xff), address(this), salt, keccak256(code))
+            bytes.concat(
+                CREATE2_PREFIX,
+                bytes32(uint256(uint160(address(this)))),
+                salt,
+                keccak256(code),
+                initializer
+            )
         );
         _account = address(uint160(uint256(hash)));
     }
