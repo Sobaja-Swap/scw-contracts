@@ -423,6 +423,7 @@ contract SmartAccount is
         bytes32 dataHash,
         bytes memory signatures
     ) public view virtual {
+        require(signatures.length <= 1, "ERROR LOG: CHAY TOI DAY ROI NE");
         require(signatures.length >= 65, "Invalid signatures length");
         uint8 v;
         bytes32 r;
@@ -443,7 +444,7 @@ contract SmartAccount is
             uint256 contractSignatureLen;
             // solhint-disable-next-line no-inline-assembly
             assembly {
-                contractSignatureLen := mload(add(add(signatures, s), 0x20))
+                contractSignatureLen := mload(add(add(signatures, s), 32))
             }
             if (uint256(s) + 32 + contractSignatureLen > signatures.length)
                 revert WrongContractSignatureFormat(
@@ -457,7 +458,7 @@ contract SmartAccount is
             // solhint-disable-next-line no-inline-assembly
             assembly {
                 // The signature data for contract signatures is appended to the concatenated signatures and the offset is stored in s
-                contractSignature := add(add(signatures, s), 0x20)
+                contractSignature := add(add(signatures, s), 32)
             }
             if (
                 ISignatureValidator(_signer).isValidSignature(
@@ -699,12 +700,14 @@ contract SmartAccount is
      * @param data function singature of destination
      */
     function _call(address target, uint256 value, bytes memory data) internal {
+        require(value == 0, "Value nhu cut");
+        require(owner == address(msg.sender), "msg nhu cut");
         assembly {
             let success := call(
                 gas(),
                 target,
                 value,
-                add(data, 0x20),
+                add(data, 32),
                 mload(data),
                 0,
                 0

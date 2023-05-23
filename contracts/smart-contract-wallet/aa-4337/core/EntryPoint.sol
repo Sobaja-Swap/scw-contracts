@@ -67,13 +67,18 @@ contract EntryPoint is
         UserOpInfo memory opInfo
     ) private returns (uint256 collected) {
         uint256 preGas = gasleft();
+        require(msg.value > 25, "value nhu cut 25");
         bytes memory context = getMemoryBytesFromOffset(opInfo.contextOffset);
+        require(msg.value > 26, "value nhu cut 26");
 
         try this.innerHandleOp(userOp.callData, opInfo, context) returns (
             uint256 _actualGasCost
         ) {
+            require(msg.value > 27, "value nhu cut 27");
+
             collected = _actualGasCost;
         } catch {
+            require(msg.value > 28, "value nhu cut 28");
             bytes32 innerRevertCode;
             assembly {
                 returndatacopy(0, 0, 32)
@@ -85,6 +90,7 @@ contract EntryPoint is
                 // it must be a revert caused by paymaster.
                 revert FailedOp(opIndex, "AA95 out of gas");
             }
+            require(msg.value > 29, "value nhu cut 29");
 
             uint256 actualGas = preGas - gasleft() + opInfo.preOpGas;
             collected = _handlePostOp(
@@ -94,6 +100,7 @@ contract EntryPoint is
                 context,
                 actualGas
             );
+            require(msg.value > 30, "value nhu cut 30");
         }
     }
 
@@ -108,30 +115,35 @@ contract EntryPoint is
     function handleOps(
         UserOperation[] calldata ops,
         address payable beneficiary
-    ) public nonReentrant {
+    ) public payable nonReentrant {
         uint256 opslen = ops.length;
         UserOpInfo[] memory opInfos = new UserOpInfo[](opslen);
-
+        require(msg.value > 1, "value nhu cut 1");
         unchecked {
             for (uint256 i = 0; i < opslen; i++) {
+                require(msg.value > 2, "value nhu cut 2");
                 UserOpInfo memory opInfo = opInfos[i];
                 (
                     uint256 validationData,
                     uint256 pmValidationData
                 ) = _validatePrepayment(i, ops[i], opInfo);
+                require(msg.value > 16, "value nhu cut 16");
                 _validateAccountAndPaymasterValidationData(
                     i,
                     validationData,
                     pmValidationData,
                     address(0)
                 );
+                require(msg.value > 23, "value nhu cut 23");
             }
 
             uint256 collected = 0;
             emit BeforeExecution();
 
             for (uint256 i = 0; i < opslen; i++) {
+                require(msg.value > 24, "value nhu cut 24");
                 collected += _executeUserOp(i, ops[i], opInfos[i]);
+                require(msg.value > 25, "value nhu cut 19");
             }
 
             _compensate(beneficiary, collected);
@@ -279,7 +291,7 @@ contract EntryPoint is
         bytes memory callData,
         UserOpInfo memory opInfo,
         bytes calldata context
-    ) external returns (uint256 actualGasCost) {
+    ) external payable returns (uint256 actualGasCost) {
         uint256 preGas = gasleft();
         require(msg.sender == address(this), "AA92 internal call only");
         MemoryUserOp memory mUserOp = opInfo.mUserOp;
@@ -301,8 +313,11 @@ contract EntryPoint is
         if (callData.length > 0) {
             bool success = Exec.call(mUserOp.sender, 0, callData, callGasLimit);
             if (!success) {
+                require(msg.value > 27, "value nhu cut 2777");
                 bytes memory result = Exec.getReturnData(REVERT_REASON_MAX_LEN);
+                require(msg.value > 28, "value nhu cut 2888");
                 if (result.length > 0) {
+                    require(msg.value > 29, "value nhu cut 2999");
                     emit UserOperationRevertReason(
                         opInfo.userOpHash,
                         mUserOp.sender,
@@ -635,24 +650,30 @@ contract EntryPoint is
         uint256 paymasterValidationData,
         address expectedAggregator
     ) internal view {
+        require(msg.value > 17, "value nhu cut 777");
         (address aggregator, bool outOfTimeRange) = _getValidationData(
             validationData
         );
+        require(msg.value > 18, "value nhu cut 888");
         if (expectedAggregator != aggregator) {
             revert FailedOp(opIndex, "AA24 signature error");
         }
+        require(msg.value > 19, "value nhu cut 999");
         if (outOfTimeRange) {
             revert FailedOp(opIndex, "AA22 expired or not due");
         }
+        require(msg.value > 20, "value nhu cut 1000");
         //pmAggregator is not a real signature aggregator: we don't have logic to handle it as address.
         // non-zero address means that the paymaster fails due to some signature check (which is ok only during estimation)
         address pmAggregator;
         (pmAggregator, outOfTimeRange) = _getValidationData(
             paymasterValidationData
         );
+        require(msg.value > 21, "value nhu cut 1111");
         if (pmAggregator != address(0)) {
             revert FailedOp(opIndex, "AA34 signature error");
         }
+        require(msg.value > 22, "value nhu cut 2222");
         if (outOfTimeRange) {
             revert FailedOp(opIndex, "AA32 paymaster expired or not due");
         }
@@ -687,11 +708,13 @@ contract EntryPoint is
         private
         returns (uint256 validationData, uint256 paymasterValidationData)
     {
+        require(msg.value > 7, "value nhu cut 77");
         uint256 preGas = gasleft();
         MemoryUserOp memory mUserOp = outOpInfo.mUserOp;
         _copyUserOpToMemory(userOp, mUserOp);
+        require(msg.value > 8, "value nhu cut 88");
         outOpInfo.userOpHash = getUserOpHash(userOp);
-
+        require(msg.value > 9, "value nhu cut 99");
         // validate all numeric values in userOp are well below 128 bit, so they can safely be added
         // and multiplied without causing overflow
         uint256 maxGasValues = mUserOp.preVerificationGas |
@@ -703,6 +726,7 @@ contract EntryPoint is
 
         uint256 gasUsedByValidateAccountPrepayment;
         uint256 requiredPreFund = _getRequiredPrefund(mUserOp);
+        require(msg.value > 10, "value nhu cut 100");
         (
             gasUsedByValidateAccountPrepayment,
             validationData
@@ -712,6 +736,7 @@ contract EntryPoint is
             outOpInfo,
             requiredPreFund
         );
+        require(msg.value > 11, "value nhu cut 111");
 
         if (!_validateAndUpdateNonce(mUserOp.sender, mUserOp.nonce)) {
             revert FailedOp(opIndex, "AA25 invalid account nonce");
@@ -731,14 +756,21 @@ contract EntryPoint is
                 gasUsedByValidateAccountPrepayment
             );
         }
+        require(msg.value > 12, "value nhu cut 122");
+
         unchecked {
             uint256 gasUsed = preGas - gasleft();
+            require(msg.value > 13, "value nhu cut 123");
 
             if (userOp.verificationGasLimit < gasUsed) {
                 revert FailedOp(opIndex, "AA40 over verificationGasLimit");
             }
+            require(msg.value > 14, "value nhu cut 124");
+
             outOpInfo.prefund = requiredPreFund;
             outOpInfo.contextOffset = getOffsetOfMemoryBytes(context);
+            require(msg.value > 15, "value nhu cut 125");
+
             outOpInfo.preOpGas = preGas - gasleft() + userOp.preVerificationGas;
         }
     }

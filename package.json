@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "npx hardhat clean",
     "build": "npm run clean && npx hardhat compile --network zkTestnet",
-    "zkTestnet:deploy": "hardhat deploy-zksync --network zkTestnet",
+    "deploy": "hardhat deploy-zksync --network zkTestnet",
     "test": "npx hardhat test",
     "lint": "prettier --write 'contracts/**/*.sol'",
     "postinstall": "husky install",

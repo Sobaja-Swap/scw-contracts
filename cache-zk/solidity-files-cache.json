@@ -1959,8 +1959,8 @@
       ]
     },
     "/Users/Pantinho_1/Desktop/pan/scw-contracts/contracts/smart-contract-wallet/SmartAccount.sol": {
-      "lastModificationDate": 1684297367096,
-      "contentHash": "8e1f7b11925aac9c1cc74d4f3e95d9e4",
+      "lastModificationDate": 1684808720270,
+      "contentHash": "b85d165200850c1af2040d5840fc0266",
       "sourceName": "contracts/smart-contract-wallet/SmartAccount.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -2809,8 +2809,8 @@
       ]
     },
     "/Users/Pantinho_1/Desktop/pan/scw-contracts/contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol": {
-      "lastModificationDate": 1684297367097,
-      "contentHash": "837918f4a3654b39c64aab25874f37c7",
+      "lastModificationDate": 1684825656906,
+      "contentHash": "cadf728f2744a7e1d85996fa121c44ee",
       "sourceName": "contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -2982,8 +2982,8 @@
       ]
     },
     "/Users/Pantinho_1/Desktop/pan/scw-contracts/contracts/smart-contract-wallet/aa-4337/interfaces/IEntryPoint.sol": {
-      "lastModificationDate": 1684297367099,
-      "contentHash": "4f6d88a128eae39933d73f138731aa0e",
+      "lastModificationDate": 1684810131969,
+      "contentHash": "8333f52646e5f8e29e335431bab8296f",
       "sourceName": "contracts/smart-contract-wallet/aa-4337/interfaces/IEntryPoint.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -3040,8 +3040,8 @@
       ]
     },
     "/Users/Pantinho_1/Desktop/pan/scw-contracts/contracts/smart-contract-wallet/aa-4337/utils/Exec.sol": {
-      "lastModificationDate": 1684297367106,
-      "contentHash": "22f20d8a9859714aaf280f77248e771b",
+      "lastModificationDate": 1684824658688,
+      "contentHash": "6b79616a518bb9198278715921ed470b",
       "sourceName": "contracts/smart-contract-wallet/aa-4337/utils/Exec.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -6341,8 +6341,8 @@
       ]
     },
     "/Users/Pantinho_1/Desktop/pan/scw-contracts/contracts/smart-contract-wallet/SmartAccountFactory.sol": {
-      "lastModificationDate": 1684463045618,
-      "contentHash": "fc18b9b9fe320d31bb8e7aff62661564",
+      "lastModificationDate": 1684491887226,
+      "contentHash": "f086ae21f117df33d0ac8eccb3ff7eca",
       "sourceName": "contracts/smart-contract-wallet/SmartAccountFactory.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -6388,6 +6388,7 @@
       "imports": [
         "./Proxy.sol",
         "./BaseSmartAccount.sol",
+        "./interfaces/IContractDeployer.sol",
         "./handler/DefaultCallbackHandler.sol",
         "./common/Errors.sol"
       ],
@@ -7092,6 +7093,59 @@
       ],
       "artifacts": [
         "GasEstimator"
+      ]
+    },
+    "/Users/Pantinho_1/Desktop/pan/scw-contracts/contracts/smart-contract-wallet/interfaces/IContractDeployer.sol": {
+      "lastModificationDate": 1684490094966,
+      "contentHash": "ca3c7d36fdd62d9ca9630d3a9478adcc",
+      "sourceName": "contracts/smart-contract-wallet/interfaces/IContractDeployer.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "mode": "3"
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.10",
+          "compilerSource": "binary",
+          "settings": {
+            "optimizer": {
+              "enabled": true,
+              "mode": "3"
+            },
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IContractDeployer"
       ]
     }
   }

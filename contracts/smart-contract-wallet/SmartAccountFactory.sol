@@ -3,6 +3,7 @@ pragma solidity 0.8.17;
 
 import "./Proxy.sol";
 import "./BaseSmartAccount.sol";
+import "./interfaces/IContractDeployer.sol";
 import {DefaultCallbackHandler} from "./handler/DefaultCallbackHandler.sol";
 import {SmartAccountFactoryErrors} from "./common/Errors.sol";
 
@@ -15,8 +16,8 @@ import {SmartAccountFactoryErrors} from "./common/Errors.sol";
 contract SmartAccountFactory {
     address public immutable basicImplementation;
     DefaultCallbackHandler public immutable minimalHandler;
-    bytes32 constant CREATE2_PREFIX =
-        0x2020dba91b30cc0006188af794c2fb30dd8520db7e2c088b7fc7c103c00ca494;
+    address constant SystemDeployer =
+        0x0000000000000000000000000000000000008006;
 
     event AccountCreation(
         address indexed account,
@@ -69,8 +70,8 @@ contract SmartAccountFactory {
         // solhint-disable-next-line no-inline-assembly
         assembly {
             proxy := create2(
-                0x0,
-                add(0x20, deploymentData),
+                0,
+                add(deploymentData, 32),
                 mload(deploymentData),
                 salt
             )
@@ -86,7 +87,7 @@ contract SmartAccountFactory {
                         gas(),
                         proxy,
                         0,
-                        add(initializer, 0x20),
+                        add(initializer, 32),
                         mload(initializer),
                         0,
                         0
@@ -113,11 +114,7 @@ contract SmartAccountFactory {
 
         // solhint-disable-next-line no-inline-assembly
         assembly {
-            proxy := create(
-                0x0,
-                add(0x20, deploymentData),
-                mload(deploymentData)
-            )
+            proxy := create(0, add(deploymentData, 32), mload(deploymentData))
         }
         require(address(proxy) != address(0), "Create call failed");
 
@@ -132,7 +129,7 @@ contract SmartAccountFactory {
                         gas(),
                         proxy,
                         0,
-                        add(initializer, 0x20),
+                        add(initializer, 32),
                         mload(initializer),
                         0,
                         0
@@ -179,17 +176,16 @@ contract SmartAccountFactory {
         bytes32 salt = keccak256(
             abi.encodePacked(keccak256(initializer), _index)
         );
-
         bytes32 hash = keccak256(
-            bytes.concat(
-                CREATE2_PREFIX,
-                bytes32(uint256(uint160(address(this)))),
-                salt,
-                keccak256(code),
-                initializer
-            )
+            abi.encodePacked(bytes1(0xff), address(this), salt, keccak256(code))
         );
-        _account = address(uint160(uint256(hash)));
+
+        _account = IContractDeployer(SystemDeployer).getNewAddressCreate2(
+            address(this),
+            keccak256(code),
+            salt,
+            initializer
+        );
     }
     // off-chain calculation
     // return ethers.utils.getCreate2Address(<factory address>, <create2 salt>, ethers.utils.keccak256(creationCode + implementation));

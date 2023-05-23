@@ -905,7 +905,7 @@
       ],
       "name": "handleOps",
       "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "payable",
       "type": "function"
     },
     {

@@ -11,22 +11,22 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     const wallet = new Wallet(PRIVATE_KEY);
     const deployer = new Deployer(hre, wallet);
 
-    // //Entry Point
-    // console.log(`Deploying EntryPoint`);
-    // const entryPoint = await deployer.loadArtifact("EntryPoint");
-    // const entryPointContract = await deployer.deploy(entryPoint, []);
-    // console.log(
-    //     "constructor args:" + entryPointContract.interface.encodeDeploy([])
-    // );
-    // console.log(`${entryPoint.contractName} : ${entryPointContract.address}`);
-    const entryPoint = '0x79bB68F405b3960f21EE21762aDE78c80eDfF933'
+    //Entry Point
+    console.log(`Deploying EntryPoint`);
+    const entryPoint = await deployer.loadArtifact("EntryPoint");
+    const entryPointContract = await deployer.deploy(entryPoint, []);
+    console.log(
+        "constructor args:" + entryPointContract.interface.encodeDeploy([])
+    );
+    console.log(`${entryPoint.contractName} : ${entryPointContract.address}`);
+    // const entryPointContract = { address: "0x696eC25d87033E0781C3FDbca78A6Bd0Af09bD31" }
 
     //SmartAccount
     console.log(`Deploying SmartAccount for basicImplementation`);
     const smartAccount = await deployer.loadArtifact("SmartAccount");
-    const smartAccountContract = await deployer.deploy(smartAccount, [entryPoint]);
+    const smartAccountContract = await deployer.deploy(smartAccount, [entryPointContract.address]);
     console.log(
-        "constructor args:" + smartAccountContract.interface.encodeDeploy([entryPoint])
+        "constructor args:" + smartAccountContract.interface.encodeDeploy([entryPointContract.address])
     );
     console.log(`${smartAccount.contractName} : ${smartAccountContract.address}`);
 
@@ -42,7 +42,7 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     // Save deployed contract addresses to a file
     const fs = require("fs");
     const deployedAddresses = {
-        entryPoint,
+        entryPoint: entryPointContract.address,
         smartAccount: smartAccountContract.address,
         factory: fatoryContract.address,
     };
@@ -53,7 +53,7 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     const verifySmarAccountId = await hre.run("verify:verify", {
         address: smartAccountContract.address,
         contract: 'contracts/smart-contract-wallet/SmartAccount.sol:SmartAccount',
-        constructorArguments: [entryPoint]
+        constructorArguments: [entryPointContract.address]
     });
 
     const verifyFactoryId = await hre.run("verify:verify", {
